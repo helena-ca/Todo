@@ -15,7 +15,7 @@ def start_db (schema):
     return conn
 
 # --- Set up CLI Interaction ---
-def set_parser():
+def set_parser(conn):
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="cmd", required = True)
 
@@ -26,7 +26,7 @@ def set_parser():
     p_schd.add_argument("name", type= valid_taskname(conn), help= "Name of the task")
     p_schd.add_argument("date", type = valid_date, help= "When does this task starts or happens in YYYY-MM-DD format")
     p_schd.add_argument("-r", "--recurring", action = "store_true", help= "Whether it repeats or not")
-    p_schd.add_argument("--wk", type=int ,help= "What day of the week does this task reccur in")
+    p_schd.add_argument("--wk", type=valid_wk ,help= "What day of the week does this task reccur in. 0-Monday through 6-Sunday.")
 
     p_list_task = sub.add_parser("list_tasks", help= "Provides list of tasks for today")
 
@@ -46,9 +46,15 @@ def valid_date(pot_date):
     except:
         raise argparse.ArgumentTypeError(f"Not a valid date: {pot_date}. Use format YYYY-MM-DD.")
 
+def valid_wk(pot_wk):
+    if -1<pot_wk<7:
+        return pot_wk
+    else:
+        raise argparse.ArgumentTypeError(f"Not a valid weekday: {pot_wk}. Try a number between 0 and 6 inclusive.")
+
 # --- Main project functionalities ---
 def add_task(conn, name):
-    conn.execute("INSERT INTO Tasks (name) VALUES (?)", (name))
+    conn.execute("INSERT INTO Tasks (name) VALUES (?)", (name,))
     conn.commit()
     print(f"The task {name} has been registered")
 
@@ -69,9 +75,9 @@ def list_update(conn):
     now = datetime.datetime.now()
     for row in cur:
         task_temp_date = datetime.datetime.strptime(row["start_date"], "%Y-%m-%d").date()
-        if task_temp_date  == now:
+        if task_temp_date  == now.date():
             conn.execute ("INSERT INTO Listicle (task_id) VALUES (?)", (row["id"]))
-        elif task_temp_date  < now:
+        elif task_temp_date  < now.date():
             if row["rec"]:
                 if not row["wk"]:
                     conn.execute ("INSERT INTO Listicle (task_id) VALUES (?)", (row["id"]))
@@ -85,11 +91,11 @@ def schd_task(conn,name, date, rec, wk):
     conn.commit()
     print(f"The task {name} has been registered")
 
-parser = set_parser()
-args = parser.parse_args()
+
 
 conn= start_db("schema.sql")
-
+parser = set_parser(conn)
+args = parser.parse_args()
 
 if args.cmd =="add_task":
     add_task(conn, args.name)

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Tasks(
     wk INTEGER,
     PRIMARY KEY (id),
     CHECK (rec IN (0,1)),
-    CHECK (-1<wk<7)
+    CHECK (wk BETWEEN O AND 6 OR wk IS NULL)
 );
 
 --List of tasks in a given day
@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS Listicle(
     id INTEGER,
     task_id INTEGER NOT NULL,
     PRIMARY KEY (id),
-    FOREIGN KEY (task_id) REFERENCES Tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES Tasks(id) ON DELETE CASCADE
 );
