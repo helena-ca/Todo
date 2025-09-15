@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Tasks(
     wk INTEGER,
     PRIMARY KEY (id),
     CHECK (rec IN (0,1)),
-    CHECK (wk BETWEEN O AND 6 OR wk IS NULL)
+    CHECK (wk BETWEEN 0 AND 6 OR wk IS NULL)
 );
 
 --List of tasks in a given day
