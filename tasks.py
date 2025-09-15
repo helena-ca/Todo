@@ -39,7 +39,7 @@ def set_parser(conn):
         except:
             raise argparse.ArgumentTypeError("Weekday must be an integer.")
         if -1<v<7:
-            return pot_wk
+            return v
         else:
             raise argparse.ArgumentTypeError(f"Not a valid weekday: {pot_wk}. Try a number between 0 and 6 inclusive.")
 
@@ -49,8 +49,8 @@ def set_parser(conn):
     p_schd = sub.add_parser("schd_task", help = "Schedule a task once or cyclically")
     p_schd.add_argument("name", type= valid_taskname, help= "Name of the task")
     p_schd.add_argument("date", type = valid_date, help= "When this task starts or happens in YYYY-MM-DD format")
-    p_schd.add_argument("-r", "--recurring", action = "store_true", help= "Whether it repeats or not")
-    p_schd.add_argument("--wk", type=valid_wk ,help= "What day of the week does this task reccur in. 0-Monday through 6-Sunday.")
+    p_schd.add_argument("-r", "--recuring", action = "store_true", help= "Whether it repeats or not")
+    p_schd.add_argument("--wk", type=valid_wk ,help= "What day of the week does this task recur in. 0-Monday through 6-Sunday.")
 
     sub.add_parser("list_tasks", help= "Provides list of tasks for today")
 
@@ -103,7 +103,7 @@ def list_update(conn):
 def schd_task(conn,name, date, rec, wk):
     conn.execute("UPDATE Tasks SET start_date = ?, rec = ?, wk = ? WHERE name = ?", (date, rec, wk, name))
     conn.commit()
-    print(f"The task {name} has been registered")
+    print(f"The task {name} has been scheduled.")
 
 def reset_tasks(conn):
     conn.execute("DELETE FROM Tasks;")
@@ -116,11 +116,14 @@ conn= start_db("schema.sql")
 parser = set_parser(conn)
 args = parser.parse_args()
 
+if args.cmd == "schd_task" and args.wk is not None and not args.recuring:
+    parser.error("--wk requires --recuring")
+
 if args.cmd =="add_task":
     add_task(conn, args.name)
 elif args.cmd =="schd_task":
     n_date = str(args.date)
-    n_r = 1 if args.recurring else 0
+    n_r = 1 if args.recuring else 0
     schd_task(conn, args.name, n_date, n_r, args.wk)
 elif args.cmd =="list_tasks":
     list_task(conn)
