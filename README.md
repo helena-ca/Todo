@@ -21,8 +21,8 @@ A simple command-line manager of tasks built with Python and SQLite.
 Run `python tasks.py <command> [options]`
 
 ### List of Commands:
-- add_task <name> : Registers a new task you can have in any given day
-- schd_task <name> <date> [--recurring] [--wk]: Schedules a task for a specific date, with the option of that task happening cyclically every single day or in a specific day of a week
+- add_task < name > : Registers a new task you can have in any given day
+- schd_task < name > < date > [--recurring] [--wk]: Schedules a task for a specific date, with the option of that task happening cyclically every single day or in a specific day of a week
 - list_tasks : Provides the list of tasks that are schedule for the day the command is given
 - reset_tasks : Completely wipes any task scheduled or registered
 
@@ -41,3 +41,6 @@ List the tasks you have for today:
 
 Reset the list:
 `python tasks.py reset_tasks`
+
+## License 
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.

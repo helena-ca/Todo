@@ -46,9 +46,9 @@ def set_parser(conn):
     p_add_task = sub.add_parser("add_task", help = "Plan a new task for the future")
     p_add_task.add_argument("name", help= "Name of the task")
 
-    p_schd = sub.add_parser("schd_task", help = "Schedule a task once or ciclically")
+    p_schd = sub.add_parser("schd_task", help = "Schedule a task once or cyclically")
     p_schd.add_argument("name", type= valid_taskname, help= "Name of the task")
-    p_schd.add_argument("date", type = valid_date, help= "When does this task starts or happens in YYYY-MM-DD format")
+    p_schd.add_argument("date", type = valid_date, help= "When this task starts or happens in YYYY-MM-DD format")
     p_schd.add_argument("-r", "--recurring", action = "store_true", help= "Whether it repeats or not")
     p_schd.add_argument("--wk", type=valid_wk ,help= "What day of the week does this task reccur in. 0-Monday through 6-Sunday.")
 
@@ -75,7 +75,7 @@ def list_task(conn):
     if not rows:
         print("You have no tasks today.")
     else:
-        print("Today's tasks:\n")
+        print("Today's tasks:")
         for todo in rows:
             print(todo["name"])
         
@@ -108,7 +108,7 @@ def schd_task(conn,name, date, rec, wk):
 def reset_tasks(conn):
     conn.execute("DELETE FROM Tasks;")
     conn.execute("DELETE FROM Listicle;")
-    print("Your todo list has been reset.")
+    print("Your To-Do list has been reset.")
     conn.commit()
 
 
