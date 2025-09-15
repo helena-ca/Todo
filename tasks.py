@@ -71,10 +71,14 @@ def list_task(conn):
         INNER JOIN Tasks AS t ON t.id = l.task_id
         ORDER BY t.name;
     """)
-    for todo in today_todo:
-        print(todo["name"])
-    if today_todo.fetchone() is None:
+    rows = today_todo.fetchall()
+    if not rows:
         print("You have no tasks today.")
+    else:
+        print("Today's tasks:\n")
+        for todo in rows:
+            print(todo["name"])
+        
 
 def list_update(conn):
     conn.execute("DELETE FROM Listicle;")
